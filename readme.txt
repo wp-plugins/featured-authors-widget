@@ -30,7 +30,9 @@ Probably. Please post feature requests in the support forum.
 
 == Screenshots ==
 
-Not sure about this…will fix asap.
+1. Configure the widget in the admin interface
+2. This is how it looks in twentyeleven
+3. Add some CSS to your theme and it can look like this.
 
 == Changelog ==
 
