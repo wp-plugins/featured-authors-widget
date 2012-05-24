@@ -30,6 +30,7 @@ Probably. Please post feature requests in the support forum.
 
 == Screenshots ==
 
+Not sure about this…will fix asap.
 
 == Changelog ==
 
@@ -40,4 +41,4 @@ Probably. Please post feature requests in the support forum.
 == Upgrade Notice ==
 
 
-
+Initial release. no notes.
