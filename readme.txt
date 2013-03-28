@@ -4,7 +4,7 @@ Donate link: http://www.colinduwe.com/
 Tags: authors, widgets
 Requires at least: 3.3.2
 Tested up to: 3.3.2
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,9 @@ Probably. Please post feature requests in the support forum.
 3. Add some CSS to your theme and it can look like this.
 
 == Changelog ==
+
+= 1.1 =
+Added ability to sort the authors using the default sort options available in get_users(). Need to add other sort options like menu order and random in the future. Also need to improve how the order is saved so you only have to save the widget once. 
 
 = 1.0 =
 * Initial Release
