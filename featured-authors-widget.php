@@ -3,7 +3,7 @@
 Plugin Name: Featured Authors Widget
 Plugin URI: http://www.colinduwe.com/featured-authors-widget
 Description: This plugin provides a widget where an admin can select various authors of the blog to feature in a sidebar.
-Version: 1.0
+Version: 1.1
 Author: Colin Duwe
 Author URI: http://www.colinduwe.com
 License: GPL2
@@ -60,8 +60,7 @@ class Featured_Authors extends WP_Widget {
 
 		/* Display the widget title if one was input (before and after defined by themes). */
 		if ( $title )
-			echo $before_title . $title . $after_title;
-			
+			echo $before_title . $title . $after_title;	
 		foreach($instance['authors'] as $author){
 			$author_obj = get_userdata($author); 
 			echo '<div class="cd-fa-wrap">';
@@ -98,6 +97,7 @@ class Featured_Authors extends WP_Widget {
 		$instance['authors'] = $new_instance['authors'];
 		$instance['avatar'] = $new_instance['avatar'];
 		$instance['num_posts'] = $new_instance['num_posts'];
+		$instance['orderby'] = $new_instance['orderby'];
 
 		return $instance;
 	}
@@ -107,7 +107,7 @@ class Featured_Authors extends WP_Widget {
 	function form( $instance ) {
 
 		/* Set up some default widget settings. */
-		$defaults = array( 'title' => 'Featured Authors', 'authors' => array(), 'avatar' => TRUE, 'num_posts' => 3 );
+		$defaults = array( 'title' => 'Featured Authors', 'authors' => array(), 'avatar' => TRUE, 'num_posts' => 3, 'orderby' => 'login' );
 		$instance = wp_parse_args( (array) $instance, $defaults );?>
 		<!-- Widget Title: Text Input -->
 		<p>
@@ -118,7 +118,7 @@ class Featured_Authors extends WP_Widget {
 	    <p>
 	    	<label for="<?php echo $this->get_field_id( 'authors' ); ?>">Select Authors:</label><br />
 	    	<?php 
-			$users = get_users( 'who=author' );
+			$users = get_users( array('who' => 'author', 'orderby' => $instance['orderby'] ) );
 			foreach($users as $user){
 				echo '<input type="checkbox" id="'. $this->get_field_id( 'authors' ) .'[]"name="'. $this->get_field_name('authors').'[]"';
 				if(in_array($user->ID, $instance['authors']))
@@ -136,9 +136,19 @@ class Featured_Authors extends WP_Widget {
 			<input class="checkbox" type="checkbox" <?php checked( (bool) $instance['avatar'], true ); ?> id="<?php echo $this->get_field_id( 'avatar' ); ?>" name="<?php echo $this->get_field_name( 'avatar' ); ?>" />
     		<label for="<?php echo $this->get_field_id( 'avatar' ); ?>"><?php _e('Display the authors\'s avatars?'); ?></label>
 		</p>
-
-
-
+	    <p>
+	    	<label for="<?php echo $this->get_field_id( 'orderby' ); ?>">Order Authors By:</label><br />
+	    	<select name="<?php echo $this->get_field_name( 'orderby' ); ?>">
+	    		<option value="login" <?php if ($instance['orderby'] == 'login') { echo "selected=\"selected\""; } ?>>Login</option>
+	    		<option value="ID" <?php if ($instance['orderby'] == 'ID') { echo "selected=\"selected\""; } ?>>ID</option>
+	    		<option value="nicename" <?php if ($instance['orderby'] == 'nicename') { echo "selected=\"selected\""; } ?>>Nice Name</option>
+	    		<option value="email" <?php if ($instance['orderby'] == 'email') { echo "selected=\"selected\""; } ?>>Email</option>
+	    		<option value="URL" <?php if ($instance['orderby'] == 'URL') { echo "selected=\"selected\""; } ?>>URL</option>
+	    		<option value="display_name" <?php if ($instance['orderby'] == 'display_name') { echo "selected=\"selected\""; } ?>>Display Name</option>
+	    		<option value="post_count" <?php if ($instance['orderby'] == 'post_count') { echo "selected=\"selected\""; } ?>>Post Count</option>
+	    	</select><br />
+	    	Note: Save the widget to re-order how the authors are shown above. Then save the widget a second time to display them in that order on the front end.
+	    </p>
 	<?php
 	}
 
