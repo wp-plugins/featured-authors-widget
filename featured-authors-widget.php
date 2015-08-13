@@ -3,7 +3,7 @@
 Plugin Name: Featured Authors Widget
 Plugin URI: http://www.colinduwe.com/featured-authors-widget
 Description: This plugin provides a widget where an admin can select various authors of the blog to feature in a sidebar.
-Version: 1.1
+Version: 2.0
 Author: Colin Duwe
 Author URI: http://www.colinduwe.com
 License: GPL2
@@ -26,7 +26,7 @@ class Featured_Authors extends WP_Widget {
 	/**
 	 * Widget setup.
 	 */
-	function Featured_Authors() {
+	function __construct() {
 		global $wp_version;
 		
 		/* Widget settings. */
@@ -34,14 +34,19 @@ class Featured_Authors extends WP_Widget {
 
 		/* Widget control settings. */
 		$control_ops = array( 'width' => 250, 'height' => 350, 'id_base' => 'cd_fa' );
-
+		
 		/* Create the widget. */
-		$this->WP_Widget( 'cd_fa', 'Featured Authors', $widget_ops, $control_ops );
+		parent::__construct('cd_fa', __('Featured Authors'), $widget_ops, $control_ops );
 		
 		if (version_compare($wp_version,"2.8","<"))
 		{
 			exit ("Featured Authors requires Wordpress version 2.8 or later. Please update Wordpress. :)");
 		}
+		/* Add javascript to the admin so that the order changes */
+		add_action( 'admin_enqueue_scripts', array($this, 'cd_fa_enqueue_scripts' ));
+		
+		/* Handle AJAX request */
+		add_action( 'wp_ajax_cd_fa_order_change', array($this, 'cd_fa_order_change_callback' ));
 	}
 		
 	/**
@@ -117,15 +122,17 @@ class Featured_Authors extends WP_Widget {
 
 	    <p>
 	    	<label for="<?php echo $this->get_field_id( 'authors' ); ?>">Select Authors:</label><br />
+	    	<div class="cd-fa-authors-list">
 	    	<?php 
 			$users = get_users( array('who' => 'author', 'orderby' => $instance['orderby'] ) );
 			foreach($users as $user){
-				echo '<input type="checkbox" id="'. $this->get_field_id( 'authors' ) .'[]"name="'. $this->get_field_name('authors').'[]"';
-				if(in_array($user->ID, $instance['authors']))
+				echo '<input type="checkbox" class="widget_cd_fa-authors" name="'. $this->get_field_name('authors').'[]"';
+				if(is_array($instance['authors']) && in_array($user->ID, $instance['authors']))
 					echo ' checked="checked"';
 				echo ' value="'.$user->ID.'" />'.$user->display_name.'<br />';
 			}
 	    	?>
+	    	</div>
 	    </p>
 	    <p>
 	    	<label for="<?php echo $this->get_field_id( 'num_posts' ); ?>">Max number of posts to display per author:</label><br />
@@ -138,7 +145,7 @@ class Featured_Authors extends WP_Widget {
 		</p>
 	    <p>
 	    	<label for="<?php echo $this->get_field_id( 'orderby' ); ?>">Order Authors By:</label><br />
-	    	<select name="<?php echo $this->get_field_name( 'orderby' ); ?>">
+	    	<select class="cd-fa-order-select" name="<?php echo $this->get_field_name( 'orderby' ); ?>" data-instance-number="<?php print_r($this->number); ?>">
 	    		<option value="login" <?php if ($instance['orderby'] == 'login') { echo "selected=\"selected\""; } ?>>Login</option>
 	    		<option value="ID" <?php if ($instance['orderby'] == 'ID') { echo "selected=\"selected\""; } ?>>ID</option>
 	    		<option value="nicename" <?php if ($instance['orderby'] == 'nicename') { echo "selected=\"selected\""; } ?>>Nice Name</option>
@@ -147,12 +154,31 @@ class Featured_Authors extends WP_Widget {
 	    		<option value="display_name" <?php if ($instance['orderby'] == 'display_name') { echo "selected=\"selected\""; } ?>>Display Name</option>
 	    		<option value="post_count" <?php if ($instance['orderby'] == 'post_count') { echo "selected=\"selected\""; } ?>>Post Count</option>
 	    	</select><br />
-	    	Note: Save the widget to re-order how the authors are shown above. Then save the widget a second time to display them in that order on the front end.
 	    </p>
 	<?php
 	}
-
+	
+	public function cd_fa_enqueue_scripts(){
+		wp_register_script('cd_fa_js', plugins_url('js/featured-authors-admin.js', __FILE__), array('jquery'), '', true);
+		wp_enqueue_script('cd_fa_js');
+	}
+	
+	public function cd_fa_order_change_callback(){
+		$instance_number = $_POST['instance_number'];
+		$order = $_POST['order'];
+		if( isset($_POST['selected_authors']) )
+			$selected_authors = $_POST['selected_authors'];
+		else
+			$selected_authors = [];
+		$users = get_users( array('who' => 'author', 'orderby' => $order ) );
+		foreach($users as $user){
+			echo '<input type="checkbox" class="widget_cd_fa-authors" name="widget-cd_fa['.$instance_number.'][authors][]"';
+			if(is_array($selected_authors) && in_array($user->ID, $selected_authors))
+				echo ' checked="checked"';
+			echo ' value="'.$user->ID.'" />'.$user->display_name.'<br />';
+		}
+		wp_die();
+	}
 
 }
-
 ?>

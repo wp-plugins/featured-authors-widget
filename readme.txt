@@ -3,8 +3,8 @@ Contributors: ColinD
 Donate link: http://www.colinduwe.com/
 Tags: authors, widgets
 Requires at least: 3.3.2
-Tested up to: 4.0.1
-Stable tag: 1.1
+Tested up to: 4.3
+Stable tag: 2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,11 @@ Probably. Please post feature requests in the support forum.
 3. Add some CSS to your theme and it can look like this.
 
 == Changelog ==
+
+= 2.0 =
+Updated to comply with php5 constructor.
+Added ajax to admin UI to re-order the selected authors.
+Misc small code clean up
 
 = 1.1 =
 Added ability to sort the authors using the default sort options available in get_users(). Need to add other sort options like menu order and random in the future. Also need to improve how the order is saved so you only have to save the widget once. 
