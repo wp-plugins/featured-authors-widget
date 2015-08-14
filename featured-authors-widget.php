@@ -3,7 +3,7 @@
 Plugin Name: Featured Authors Widget
 Plugin URI: http://www.colinduwe.com/featured-authors-widget
 Description: This plugin provides a widget where an admin can select various authors of the blog to feature in a sidebar.
-Version: 2.0
+Version: 2.0.1
 Author: Colin Duwe
 Author URI: http://www.colinduwe.com
 License: GPL2
@@ -169,7 +169,7 @@ class Featured_Authors extends WP_Widget {
 		if( isset($_POST['selected_authors']) )
 			$selected_authors = $_POST['selected_authors'];
 		else
-			$selected_authors = [];
+			$selected_authors = array();
 		$users = get_users( array('who' => 'author', 'orderby' => $order ) );
 		foreach($users as $user){
 			echo '<input type="checkbox" class="widget_cd_fa-authors" name="widget-cd_fa['.$instance_number.'][authors][]"';

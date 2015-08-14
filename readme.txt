@@ -4,7 +4,7 @@ Donate link: http://www.colinduwe.com/
 Tags: authors, widgets
 Requires at least: 3.3.2
 Tested up to: 4.3
-Stable tag: 2.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,9 @@ Probably. Please post feature requests in the support forum.
 3. Add some CSS to your theme and it can look like this.
 
 == Changelog ==
+
+= 2.0.1 =
+Fixed array variable declaration.
 
 = 2.0 =
 Updated to comply with php5 constructor.
